@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.springframework.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pss.dao.ProductDao">
+    <resultMap id="Product" type="com.pss.bean.Product">
+        <id property="id" column="id"/>
+        <result property="barCode" column="bar_code"/>
+        <result property="supplierId" column="supplier_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="supplierName" column="supplier_name"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="productName" column="product_name"/>
+        <result property="price" column="sale_price"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+    <select id="getAll" resultMap="Product">
+        select p.id,p.bar_code,p.supplier_id,p.category_id,s.supplier_name,c.category_name,p.product_name,p.sale_price from biz_product p,biz_category c,biz_supplier s
+        <where>
+            p.supplier_id=s.id and p.category_id=c.id and p.deleted=0 and p.product_name like concat('%',#{key},'%')
+        </where>
+    </select>
+    <update id="delete" parameterType="com.pss.bean.Product">
+        update biz_product set deleted=1 where id=#{id}
+    </update>
+    <select id="getProductById" resultMap="Product">
+        select * from biz_product where id=#{id}
+    </select>
+    <update id="update" parameterType="com.pss.bean.Product">
+        update biz_product set bar_code=#{product.barCode},supplier_id=#{product.supplierId},category_id=#{product.categoryId},product_name=#{product.productName},sale_price=#{product.price},update_time=#{product.updateTime} where id=#{product.id}
+    </update>
+    <select id="getProductByBarCode" resultMap="Product">
+        select * from biz_product where bar_code=#{barCode}
+    </select>
+    <insert id="add" parameterType="com.pss.bean.Product">
+        insert into biz_product(bar_code,supplier_id,category_id,product_name,sale_price,create_time,update_time,deleted) values(#{product.barCode},#{product.supplierId},#{product.categoryId},#{product.productName},#{product.price},#{product.createTime},#{product.updateTime},#{product.deleted})
+    </insert>
+    <select id="getProductCount" resultMap="Product">
+        select * from biz_product where category_id=#{id} and deleted=0
+    </select>
+</mapper>

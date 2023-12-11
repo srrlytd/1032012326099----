@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.springframework.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pss.dao.StockDao">
+    <resultMap id="Stock" type="com.pss.bean.Stock">
+        <result property="productBarCode" column="product_bar_code"/>
+        <result property="stockCount" column="stock_count"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="productName" column="product_name"/>
+        <result property="supplierName" column="supplier_name"/>
+        <result property="contactsName" column="contacts_name"/>
+        <result property="tel" column="tel"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+        <result property="lockKey" column="lock_key"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="modifyCount" column="modify_count"/>
+        <result property="modifyType" column="modify_type"/>
+    </resultMap>
+    <select id="getAll" resultMap="Stock">
+        select st.product_bar_code,st.stock_count,c.category_name,p.product_name,s.supplier_name,s.contacts_name,s.tel,st.create_time,st.update_time,st.deleted,st.lock_key from biz_stock st,biz_product p,biz_supplier s,biz_category c
+        <where>
+            st.deleted=0 and st.product_bar_code=p.bar_code and p.supplier_id=s.id and p.category_id=c.id
+            <if test="key!=null">
+                and p.product_name like concat('%',#{key},'%')
+            </if>
+        </where>
+    </select>
+    <select id="record" resultMap="Stock">
+        select re.product_bar_code,c.category_name,p.product_name,re.modify_count,re.modify_type,re.create_time from biz_product p,biz_category c,biz_stock_modify_record re
+        <where>
+            re.deleted=0 and re.product_bar_code=p.bar_code and p.category_id=c.id
+            <if test="key!=null">
+                and p.product_name like concat('%',#{key},'%')
+            </if>
+        </where>
+    </select>
+    <select id="getStockByBarCode" resultMap="Stock">
+        select * from biz_stock where product_bar_code=#{barCode}
+    </select>
+    <insert id="add" parameterType="com.pss.bean.Stock">
+        insert into biz_stock(product_bar_code,stock_count,create_time,update_time,deleted,lock_key) values(#{stock.productBarCode},#{stock.stockCount},#{stock.createTime},#{stock.updateTime},#{stock.deleted},#{stock.lockKey})
+    </insert>
+    <insert id="addr" parameterType="com.pss.bean.Stock">
+        insert into biz_stock_modify_record(product_bar_code,modify_count,modify_type,create_time,update_time,deleted) values(#{record.productBarCode},#{record.modifyCount},#{record.modifyType},#{record.createTime},#{record.updateTime},#{record.deleted})
+    </insert>
+    <update id="updateCount" parameterType="com.pss.bean.Stock">
+        update biz_stock set stock_count=#{stock.stockCount} where product_bar_code=#{stock.productBarCode}
+    </update>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.springframework.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pss.dao.UserDao">
+    <resultMap id="User" type="com.pss.bean.User">
+        <id property="id" column="id"/>
+        <result property="role_id" column="role_id"/>
+        <result property="role_name" column="role_name"/>
+        <result property="username" column="user_name"/>
+        <result property="loginname" column="login_account"/>
+        <result property="password" column="password"/>
+        <result property="phone" column="tel"/>
+        <result property="wx" column="wx_account"/>
+        <result property="id_no" column="id_no"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+    <select id="login" resultMap="User">
+        select u.id,role_id,r.role_name,u.user_name,login_account,u.password,u.tel,u.wx_account,u.id_no,u.address,u.create_time,u.update_time,u.deleted from sys_user u,sys_role r where u.login_account=#{loginname} and u.password=#{password} and u.deleted=0 and u.role_id=r.id
+    </select>
+    <select id="getAll" resultMap="User">
+        select u.id,u.role_id,u.user_name,u.login_account,u.password,u.tel,u.wx_account,u.id_no,u.address,u.create_time,u.update_time,r.role_name from sys_user u,sys_role r
+        <where>
+            u.role_id=r.id and u.deleted=0
+            <if test="key!=null">
+                and user_name like concat('%',#{key},'%')
+            </if>
+        </where>
+    </select>
+    <insert id="add" parameterType="com.pss.bean.User">
+        insert into sys_user(role_id,user_name,login_account,password,tel,wx_account,id_no,address,create_time,update_time,deleted) values(#{user.role_id},#{user.username},#{user.loginname},#{user.password},#{user.phone},#{user.wx},#{user.id_no},#{user.address},#{user.createTime},#{user.updateTime},#{user.deleted})
+    </insert>
+    <update id="deleted" parameterType="com.pss.bean.User">
+        update sys_user set deleted=1 where id=#{id}
+    </update>
+    <select id="getUserById" resultMap="User">
+        select * from sys_user where id=#{id}
+    </select>
+    <update id="update" parameterType="com.pss.bean.User">
+        update sys_user set role_id=#{user.role_id},user_name=#{user.username},login_account=#{user.loginname},password=#{user.password},tel=#{user.phone},wx_account=#{user.wx},id_no=#{user.id_no},address=#{user.address},update_time=#{user.updateTime} where id=#{user.id}
+    </update>
+</mapper>

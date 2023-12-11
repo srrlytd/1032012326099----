@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.springframework.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pss.dao.SaleDao">
+    <resultMap id="Sale" type="com.pss.bean.Sale">
+        <id property="id" column="id"/>
+        <result property="productBarCode" column="product_bar_code"/>
+        <result property="productName" column="product_name"/>
+        <result property="salePrice" column="sale_price"/>
+        <result property="saleDate" column="sale_date"/>
+        <result property="saleCount" column="sale_count"/>
+        <result property="saleAmount" column="sale_amount"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+    <select id="getAll" resultMap="Sale">
+        select s.id,s.product_bar_code,p.product_name,s.sale_price,s.sale_date,s.sale_count,s.sale_amount from biz_sale s,biz_product p
+        <where>
+            s.deleted=0 and s.product_bar_code=p.bar_code
+            <if test="key!=null">
+                and p.product like concat('%',#{key},'%')
+            </if>
+        </where>
+    </select>
+    <insert id="add" parameterType="com.pss.bean.Sale">
+        insert into biz_sale(product_bar_code,sale_price,sale_date,sale_count,sale_amount,create_time,update_time,deleted) values(#{sale.productBarCode},#{sale.salePrice},#{sale.saleDate},#{sale.saleCount},#{sale.saleAmount},#{sale.createTime},#{sale.updateTime},#{sale.deleted})
+    </insert>
+</mapper>

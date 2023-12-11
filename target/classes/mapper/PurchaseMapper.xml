@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.springframework.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pss.dao.PurchaseDao">
+    <resultMap id="Purchase" type="com.pss.bean.Purchase">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="barCode" column="bar_code"/>
+        <result property="supplierName" column="supplier_name"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="purchaseDate" column="purchase_date"/>
+        <result property="proDate" column="pro_date"/>
+        <result property="expDate" column="exp_date"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="count" column="count"/>
+        <result property="amount" column="amount"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+    <select id="getAll" resultMap="Purchase">
+        select pu.id,pu.product_id,pr.product_name,pr.bar_code,s.supplier_name,c.category_name,pu.purchase_date,pu.pro_date,pu.exp_date,pu.purchase_price,pu.count,pu.amount,pu.create_time,pu.update_time from biz_purchase pu,biz_product pr,biz_supplier s,biz_category c
+        <where>
+            pu.deleted=0 and pu.product_id=pr.id and pr.supplier_id=s.id and pr.category_id=c.id
+            <if test="key!=null">
+                and pr.product_name like concat('%',#{key},'%')
+            </if>
+        </where>
+    </select>
+    <insert id="add" parameterType="com.pss.bean.Purchase">
+        insert into biz_purchase(product_id,purchase_date,pro_date,exp_date,purchase_price,count,amount,create_time,update_time,deleted) values(#{purchase.productId},#{purchase.purchaseDate},#{purchase.proDate},#{purchase.expDate},#{purchase.purchasePrice},#{purchase.count},#{purchase.amount},#{purchase.createTime},#{purchase.updateTime},#{purchase.deleted})
+    </insert>
+</mapper>

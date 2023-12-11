@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.springframework.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pss.dao.CategoryDao">
+    <resultMap id="Category" type="com.pss.bean.Category">
+        <id property="id" column="id"/>
+        <result property="category_name" column="category_name"/>
+        <result property="create_time" column="create_time"/>
+        <result property="update_time" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+    <select id="getAll" resultMap="Category">
+        select * from biz_category where category_name like concat('%',#{key},'%') and deleted=0
+    </select>
+    <insert id="add" parameterType="com.pss.bean.Category">
+        insert into biz_category(category_name,create_time,update_time,deleted) values(#{category.category_name},#{category.create_time},#{category.update_time},#{category.deleted})
+    </insert>
+    <update id="delete" parameterType="com.pss.bean.Category">
+        update biz_category set deleted=1 where id=#{id}
+    </update>
+    <select id="getCategoryById" resultMap="Category">
+        select * from biz_category where id=#{id}
+    </select>
+    <update id="update" parameterType="com.pss.bean.Category">
+        update biz_category set category_name=#{category.category_name},update_time=#{category.update_time} where id=#{category.id}
+    </update>
+    <select id="getCategoryByCategoryName" resultMap="Category">
+        select * from biz_category where category_name=#{categoryName}
+    </select>
+</mapper>
